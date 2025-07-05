@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Tamizhan Skills E-Learning App</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Icons" rel="stylesheet" />
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: #f9fafb;
+    font-family: 'Inter', sans-serif;
+    color: #374151;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  button {
+    cursor: pointer;
+    font-family: inherit;
+  }
+  /* Material Icons base */
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Containers */
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffffcc;
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    background: #2563eb;
+    color: white;
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: saturate(180%) blur(12px);
+    z-index: 100;
+  }
+  header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  header .logo-icon {
+    background: #1d4ed8;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  header button.nav-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    padding: 0 4px;
+  }
+
+  main {
+    flex: 1 1 auto;
+    padding: 1rem 1rem 5rem;
+    overflow-y: auto;
+  }
+
+  /* Navigation Tabs */
+  nav.tabs {
+    display: flex;
+    background: #e0e7ff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px #c7d2fe;
+    margin-bottom: 1.5rem;
+  }
+  nav.tabs button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #4f46e5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  nav.tabs button.active,
+  nav.tabs button:hover {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+  nav.tabs button:focus {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+  }
+  nav.tabs .material-icons {
+    font-size: 20px;
+  }
+
+  /* Course Cards - Home Page */
+  .course-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 360px) {
+    .course-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .course-card {
+    background: #ffffffdd;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgb(37 99 235 / 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .course-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgb(37 99 235 / 0.3);
+  }
+  .course-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+  .course-info {
+    padding: 0.75rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .course-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+  }
+  .course-desc {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.3;
+  }
+  .course-meta {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .course-meta .material-icons {
+    font-size: 18px;
+    vertical-align: middle;
+  }
+
+  /* Course Details Page */
+  .course-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .course-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .course-description {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+  .lesson-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .lesson-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    background: #f3f4f6;
+    padding: 0.75rem 1rem;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .lesson-item:hover {
+    background: #e0e7ff;
+  }
+  .lesson-item.active {
+    background: #c7d2fe;
+    font-weight: 600;
+    color: #2563eb;
+  }
+  .lesson-title {
+    font-size: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .lesson-duration {
+    font-size: 0.8rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  /* Video Lesson Page */
+  .video-lesson {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  video {
+    width: 100%;
+    border-radius: 16px;
+    background-color: black;
+    max-height: 240px;
+  }
+  .video-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #1e293b;
+  }
+  .video-desc {
+    font-size: 0.95rem;
+    color: #475569;
+  }
+
+  /* Quiz Interface */
+  .quiz-container {
+    background: #ffffffdd;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 6px 14px rgb(37 99 235 / 0.12);
+  }
+  .quiz-question {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #1e293b;
+  }
+  .quiz-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .quiz-option {
+    margin-bottom: 0.75rem;
+  }
+  .quiz-option label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 0.75rem;
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+    font-size: 0.95rem;
+  }
+  .quiz-option input[type="radio"] {
+    accent-color: #2563eb;
+    width: 20px;
+    height: 20px;
+  }
+  .quiz-option label:hover {
+    background: #e0e7ff;
+  }
+  .quiz-submit-btn {
+    margin-top: 1rem;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 14px;
+    padding: 0.75rem 1.25rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+  .quiz-submit-btn:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+  }
+  .quiz-submit-btn:hover:not(:disabled) {
+    background: #1e40af;
+  }
+  .quiz-result {
+    margin-top: 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2563eb;
+  }
+  
+  /* Progress/Streak Tracker */
+  .progress-container {
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  }
+  .progress-bar {
+    position: relative;
+    width: 80%;
+    height: 14px;
+    border-radius: 14px;
+    background: #e0e7ff;
+    overflow: hidden;
+    box-shadow: inset 0 0 6px rgba(37, 99, 235, 0.15);
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 14px 0 0 14px;
+    background: linear-gradient(90deg, #4f46e5, #2563eb);
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4f46e5;
+    min-width: 56px;
+    text-align: right;
+  }
+
+  /* Streak tracker */
+  .streak-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .streak-icon {
+    color: #eab308;
+    font-size: 28px;
+  }
+  .streak-text {
+    font-weight: 700;
+    color: #ca8a04;
+    font-size: 1.1rem;
+  }
+
+  /* Accessibility: focus states */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  a:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+<div id="app" role="main" aria-label="Tamizhan Skills E-Learning App">
+  <header>
+    <div class="logo" aria-label="Tamizhan Skills">
+      <div class="logo-icon" aria-hidden="true">
+        <span class="material-icons">school</span>
+      </div>
+      Tamizhan Skills
+    </div>
+    <button class="nav-toggle" aria-controls="main-tabs" aria-expanded="true" aria-label="Select section">
+      <span class="material-icons">menu_book</span>
+    </button>
+  </header>
+
+  <nav class="tabs" role="tablist" id="main-tabs">
+    <button role="tab" aria-selected="true" aria-controls="home-tab" id="home-tab-btn" class="active" tabindex="0" data-tab="home">
+      <span class="material-icons" aria-hidden="true">home</span> Home
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="course-tab" id="course-tab-btn" tabindex="-1" data-tab="course">
+      <span class="material-icons" aria-hidden="true">menu_book</span> Course
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="video-tab" id="video-tab-btn" tabindex="-1" data-tab="video">
+      <span class="material-icons" aria-hidden="true">play_circle_filled</span> Video
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="quiz-tab" id="quiz-tab-btn" tabindex="-1" data-tab="quiz">
+      <span class="material-icons" aria-hidden="true">quiz</span> Quiz
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="progress-tab" id="progress-tab-btn" tabindex="-1" data-tab="progress">
+      <span class="material-icons" aria-hidden="true">timeline</span> Progress
+    </button>
+  </nav>
+
+  <main>
+    <!-- Home / Browse Courses -->
+    <section id="home-tab" role="tabpanel" aria-labelledby="home-tab-btn" tabindex="0">
+      <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #1e293b;">Browse Courses</h1>
+      <div class="course-list" role="list">
+        <article class="course-card" role="listitem" tabindex="0" aria-label="Tamizhan Programming Basics Course" data-course-id="1">
+          <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1b94d1eb-669d-4bd8-8bf4-a3d3761798fd.png" alt="Bright illustration representing programming basics course with laptop and code icons on yellow background" class="course-image" loading="lazy" />
+          <div class="course-info">
+            <h2 class="course-title">Programming Basics</h2>
+            <p class="course-desc">Learn the fundamentals of programming with examples and exercises in Tamil.</p>
+            <div class="course-meta">
+              <span><span class="material-icons" aria-hidden="true">schedule</span> 12 hrs</span>
+              <span><span class="material-icons" aria-hidden="true">play_circle_filled</span> 24 Videos</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="course-card" role="listitem" tabindex="0" aria-label="Tamizhan Web Development Course" data-course-id="2">
+          <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fa6aaf72-e5c4-4ad9-ab0d-7fb202c313e8.png" alt="Vibrant illustration of web development course with monitor and browser icons on blue background" class="course-image" loading="lazy" />
+          <div class="course-info">
+            <h2 class="course-title">Web Development</h2>
+            <p class="course-desc">Build modern websites using HTML, CSS, and JavaScript with Tamil instructions.</p>
+            <div class="course-meta">
+              <span><span class="material-icons" aria-hidden="true">schedule</span> 20 hrs</span>
+              <span><span class="material-icons" aria-hidden="true">play_circle_filled</span> 40 Videos</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="course-card" role="listitem" tabindex="0" aria-label="Tamizhan UI/UX Design Course" data-course-id="3">
+          <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fbdd8660-6045-4eb5-8006-815cf81ac826.png" alt="Modern graphic representing UI UX design course with wireframe and design elements on teal background" class="course-image" loading="lazy" />
+          <div class="course-info">
+            <h2 class="course-title">UI/UX Design</h2>
+            <p class="course-desc">Master user interface and user experience design principles, tailored for Tamil learners.</p>
+            <div class="course-meta">
+              <span><span class="material-icons" aria-hidden="true">schedule</span> 15 hrs</span>
+              <span><span class="material-icons" aria-hidden="true">play_circle_filled</span> 30 Videos</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Course Details -->
+    <section id="course-tab" role="tabpanel" aria-labelledby="course-tab-btn" tabindex="0" hidden>
+      <h1 class="course-header">Course Details</h1>
+      <p class="course-description" id="course-desc">Select a course to view its details and lessons.</p>
+      <ul class="lesson-list" id="lesson-list" aria-label="List of course lessons">
+        <!-- Lessons dynamically inserted here -->
+      </ul>
+    </section>
+
+    <!-- Video Lesson -->
+    <section id="video-tab" role="tabpanel" aria-labelledby="video-tab-btn" tabindex="0" hidden>
+      <div class="video-lesson">
+        <video controls preload="metadata" aria-label="Video lesson player" id="video-player">
+          <source src="https://samplelib.com/lib/preview/mp4/sample-5s.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div>
+          <h2 class="video-title" id="video-title">Lesson Title</h2>
+          <p class="video-desc" id="video-desc">Lesson description will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Interface -->
+    <section id="quiz-tab" role="tabpanel" aria-labelledby="quiz-tab-btn" tabindex="0" hidden>
+      <div class="quiz-container" aria-live="polite">
+        <p class="quiz-question" id="quiz-question">Loading quiz question...</p>
+        <ul class="quiz-options" id="quiz-options" role="radiogroup" aria-labelledby="quiz-question">
+          <!-- Options dynamically inserted -->
+        </ul>
+        <button class="quiz-submit-btn" id="quiz-submit-btn" disabled aria-disabled="true">Submit Answer</button>
+        <p class="quiz-result" id="quiz-result" aria-live="assertive"></p>
+      </div>
+    </section>
+
+    <!-- Progress Tracker -->
+    <section id="progress-tab" role="tabpanel" aria-labelledby="progress-tab-btn" tabindex="0" hidden>
+      <h1 style="text-align:center; font-weight:700; font-size:1.3rem; color:#1e293b;">Learning Progress</h1>
+      <div class="progress-container" aria-label="Course progress bar">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+      <div class="streak-container" aria-label="Daily learning streak">
+        <span class="material-icons streak-icon" aria-hidden="true">whatshot</span>
+        <span class="streak-text" id="streak-text">0 Day Streak</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Basic SPA tab switching
+  const tabs = document.querySelectorAll('nav.tabs button');
+  const panels = document.querySelectorAll('main > section[role="tabpanel"]');
+
+  let selectedCourse = null;
+  let selectedLessonIndex = 0;
+  let progress = 0; // in %
+  let streak = 0;
+
+  const courses = [
+    {
+      id: 1,
+      title: 'Programming Basics',
+      description: 'Learn the fundamentals of programming with examples and exercises in Tamil.',
+      lessons: [
+        { title: 'Introduction to Programming', duration: '10:32', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Overview of programming concepts and setup.' },
+        { title: 'Variables and Data Types', duration: '12:45', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Understanding variables, types, and usage.' },
+        { title: 'Control Structures', duration: '14:20', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'If statements, loops, and decision making.' },
+      ]
+    },
+    {
+      id: 2,
+      title: 'Web Development',
+      description: 'Build modern websites using HTML, CSS, and JavaScript with Tamil instructions.',
+      lessons: [
+        { title: 'HTML Basics', duration: '15:00', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Marking up content with HTML.' },
+        { title: 'CSS Styling', duration: '20:10', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Applying styles to webpages and layouts.' },
+        { title: 'JavaScript Essentials', duration: '25:50', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Programming webpages with JavaScript.' },
+      ]
+    },
+    {
+      id: 3,
+      title: 'UI/UX Design',
+      description: 'Master user interface and user experience design principles, tailored for Tamil learners.',
+      lessons: [
+        { title: 'Design Fundamentals', duration: '14:35', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Basic concepts in design and user experience.' },
+        { title: 'Wireframing & Prototyping', duration: '13:40', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Creating wireframes and interactive prototypes.' },
+        { title: 'Usability Testing', duration: '12:15', videoSrc:'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', description: 'Testing designs for user friendliness.' },
+      ]
+    }
+  ];
+
+  // Sample quiz questions for demonstration
+  const quizQuestions = [
+    {
+      question: "What does HTML stand for?",
+      options: [
+        "Hyper Text Markup Language",
+        "Hyperlinks and Text Markup Language",
+        "Home Tool Markup Language",
+        "Hyperlinking Textual Mark Language"
+      ],
+      answerIndex: 0,
+    },
+    {
+      question: "Which CSS property controls the text size?",
+      options: [
+        "font-style",
+        "text-size",
+        "font-size",
+        "text-style"
+      ],
+      answerIndex: 2,
+    },
+    {
+      question: "Inside which HTML element do we put the JavaScript?",
+      options: [
+        "<script>",
+        "<js>",
+        "<javascript>",
+        "<code>"
+      ],
+      answerIndex: 0,
+    }
+  ];
+
+  // Tab switching logic with keyboard support
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    tab.addEventListener('keydown', (e) => {
+      let newIndex = i;
+      if (e.key === 'ArrowRight') {
+        newIndex = (i + 1) % tabs.length;
+        tabs[newIndex].focus();
+      } else if (e.key === 'ArrowLeft') {
+        newIndex = (i - 1 + tabs.length) % tabs.length;
+        tabs[newIndex].focus();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        tabs[0].focus();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        tabs[tabs.length -1].focus();
+      }
+    });
+  });
+
+  function switchTab(tabName) {
+    tabs.forEach(t => {
+      if(t.dataset.tab === tabName) {
+        t.classList.add('active');
+        t.setAttribute('aria-selected', 'true');
+        t.tabIndex = 0;
+      } else {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+        t.tabIndex = -1;
+      }
+    });
+    panels.forEach(panel => {
+      if(panel.id === tabName + '-tab') {
+        panel.hidden = false;
+      } else {
+        panel.hidden = true;
+      }
+    });
+
+    // Load relevant content on tab switch
+    if(tabName === 'course') {
+      renderCourseDetails(selectedCourse || courses[0].id);
+    } else if (tabName === 'video') {
+      if (selectedCourse) {
+        loadVideoLesson(selectedCourse, selectedLessonIndex);
+      }
+    } else if (tabName === 'quiz') {
+      currentQuizIndex = 0;
+      renderQuizQuestion(currentQuizIndex);
+    } else if (tabName === 'progress') {
+      updateProgressUI();
+    }
+  }
+
+  // Handle course card click
+  const courseCards = document.querySelectorAll('.course-card');
+  courseCards.forEach(card =>
+    card.addEventListener('click', () => {
+      selectedCourse = Number(card.dataset.courseId);
+      // switch to course tab and load details
+      switchTab('course');
+      tabs.forEach(t => {
+        if(t.dataset.tab === 'course') t.focus();
+      });
+    })
+  );
+
+  // Render course detail lessons list
+  function renderCourseDetails(courseId) {
+    const course = courses.find(c => c.id === courseId);
+    if (!course) return;
+    selectedCourse = course.id;
+    selectedLessonIndex = 0;
+
+    document.getElementById('course-desc').textContent = course.description;
+
+    const lessonList = document.getElementById('lesson-list');
+    lessonList.innerHTML = '';
+    course.lessons.forEach((lesson, index) => {
+      const li = document.createElement('li');
+      li.className = 'lesson-item';
+      li.setAttribute('role','button');
+      li.setAttribute('tabindex','0');
+      li.setAttribute('aria-pressed', 'false');
+      if (index === selectedLessonIndex) {
+        li.classList.add('active');
+        li.setAttribute('aria-pressed', 'true');
+      }
+      li.textContent = lesson.title + ' ';
+      const durationSpan = document.createElement('span');
+      durationSpan.className = 'lesson-duration';
+      durationSpan.innerHTML = '<span class="material-icons" aria-hidden="true">schedule</span> ' + lesson.duration;
+      li.appendChild(durationSpan);
+
+      li.addEventListener('click', () => {
+        selectedLessonIndex = index;
+        highlightLesson(index);
+        loadVideoLesson(course.id, index);
+        switchTab('video');
+        tabs.forEach(t => {
+          if(t.dataset.tab === 'video') t.focus();
+        });
+      });
+      li.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          li.click();
+        }
+      });
+      lessonList.appendChild(li);
+    });
+  }
+
+  function highlightLesson(index) {
+    const lessonItems = document.querySelectorAll('.lesson-item');
+    lessonItems.forEach((item, i) => {
+      if(i === index) {
+        item.classList.add('active');
+        item.setAttribute('aria-pressed', 'true');
+      } else {
+        item.classList.remove('active');
+        item.setAttribute('aria-pressed', 'false');
+      }
+    });
+  }
+
+
+  function loadVideoLesson(courseId, lessonIndex) {
+    const course = courses.find(c => c.id === courseId);
+    if (!course) return;
+    const lesson = course.lessons[lessonIndex];
+    if (!lesson) return;
+
+    const videoPlayer = document.getElementById('video-player');
+    const videoTitle = document.getElementById('video-title');
+    const videoDesc = document.getElementById('video-desc');
+
+    videoPlayer.pause();
+    videoPlayer.src = lesson.videoSrc;
+    videoPlayer.load();
+
+    videoTitle.textContent = lesson.title;
+    videoDesc.textContent = lesson.description;
+  }
+
+  // Quiz Implementation
+  const quizQuestionEl = document.getElementById('quiz-question');
+  const quizOptionsEl = document.getElementById('quiz-options');
+  const quizSubmitBtn = document.getElementById('quiz-submit-btn');
+  const quizResultEl = document.getElementById('quiz-result');
+  let selectedQuizAnswer = null;
+  let currentQuizIndex = 0;
+  let quizScore = 0;
+
+  function renderQuizQuestion(index) {
+    const questionData = quizQuestions[index];
+    selectedQuizAnswer = null;
+    quizResultEl.textContent = '';
+    quizSubmitBtn.disabled = true;
+    quizSubmitBtn.setAttribute('aria-disabled', 'true');
+
+    quizQuestionEl.textContent = `Q${index + 1}. ${questionData.question}`;
+    quizOptionsEl.innerHTML = '';
+
+    questionData.options.forEach((opt, i) => {
+      const li = document.createElement('li');
+      li.className = 'quiz-option';
+      li.setAttribute('role', 'radio');
+      li.setAttribute('tabindex', '-1');
+      li.setAttribute('aria-checked', 'false');
+
+      const label = document.createElement('label');
+      label.htmlFor = `option${i}`;
+      label.textContent = opt;
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'quiz-option';
+      input.id = `option${i}`;
+      input.value = i;
+      input.setAttribute('aria-label', opt);
+
+      input.addEventListener('change', () => {
+        selectedQuizAnswer = Number(input.value);
+        quizSubmitBtn.disabled = false;
+        quizSubmitBtn.setAttribute('aria-disabled', 'false');
+        // Mark checked option aria
+        Array.from(quizOptionsEl.children).forEach((child, idx) => {
+          child.setAttribute('aria-checked', idx === selectedQuizAnswer ? 'true' : 'false');
+          child.tabIndex = idx === selectedQuizAnswer ? 0 : -1;
+        });
+      });
+
+      label.prepend(input);
+      li.appendChild(label);
+      quizOptionsEl.appendChild(li);
+    });
+  }
+
+  quizSubmitBtn.addEventListener('click', () => {
+    if(selectedQuizAnswer === null) return;
+
+    const correctIndex = quizQuestions[currentQuizIndex].answerIndex;
+    if(selectedQuizAnswer === correctIndex) {
+      quizScore++;
+      quizResultEl.textContent = 'Correct! Good job.';
+      quizResultEl.style.color = '#16a34a'; // Green
+    } else {
+      quizResultEl.textContent = `Incorrect! Correct answer: ${quizQuestions[currentQuizIndex].options[correctIndex]}`;
+      quizResultEl.style.color = '#dc2626'; // Red
+    }
+    quizSubmitBtn.disabled = true;
+    quizSubmitBtn.setAttribute('aria-disabled', 'true');
+
+    setTimeout(() => {
+      currentQuizIndex++;
+      if(currentQuizIndex < quizQuestions.length) {
+        renderQuizQuestion(currentQuizIndex);
+      } else {
+        quizResultEl.textContent = `Quiz complete! Your score: ${quizScore} / ${quizQuestions.length}`;
+        quizSubmitBtn.style.display = 'none';
+      }
+    }, 2500);
+  });
+
+  // Progress tracking (dummy / simulated)
+  function updateProgressUI() {
+    // Simulate progress as percentage of completed lessons for the selected course
+    if (!selectedCourse) {
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('progress-text').textContent = '0%';
+      document.getElementById('streak-text').textContent = '0 Day Streak';
+      return;
+    }
+
+    const course = courses.find(c => c.id === selectedCourse);
+    if (!course) return;
+
+    // For demo: progress based on selectedLessonIndex + 1 over total lessons
+    progress = Math.round(((selectedLessonIndex + 1) / course.lessons.length) * 100);
+    streak = Math.min(progress / 20, 7); // max 7-day streak simulated
+
+    const fillEl = document.getElementById('progress-fill');
+    const textEl = document.getElementById('progress-text');
+    const streakTextEl = document.getElementById('streak-text');
+
+    fillEl.style.width = progress + '%';
+    textEl.textContent = progress + '%';
+    streakTextEl.textContent = `${Math.floor(streak)} Day Streak`;
+  }
+
+  // Initialization - default tab load
+  switchTab('home');
+
+  // Accessibility: Nav toggle (for demonstration, no drawer implemented)
+  const navToggle = document.querySelector('header button.nav-toggle');
+  navToggle.addEventListener('click', () => {
+    alert('Navigation toggle clicked. Implement menu as needed.');
+  });
+
+</script>
+</body>
+</html>
+
